@@ -1,14 +1,15 @@
+import { WinsAnalyzer } from './analyzers/WinsAnalyzer';
 import { CsvFileReader } from './CsvFileReader';
-import { MatchReader, MatchResult } from './MatchReader';
+import { MatchReader } from './MatchReader';
+import { ConsoleOutput } from './outputTargets/ConsoleOutput';
+import { SummaryBuilder } from './Summary';
 
 const matchReader = new MatchReader(new CsvFileReader('football.csv'));
 matchReader.load();
 
-let manUnitedWins = 0;
+const burnleyWinsSummary = new SummaryBuilder(
+  new WinsAnalyzer('Burnley'),
+  new ConsoleOutput()
+);
 
-for (let match of matchReader.matchData) {
-  if (match[5] === MatchResult.Draw) continue;
-  const winningTeam = match[5] === MatchResult.HomeWin ? match[1] : match[2];
-  if (winningTeam === 'Man United') ++manUnitedWins;
-}
-console.log(manUnitedWins);
+burnleyWinsSummary.exec(matchReader.matchData);
