@@ -1,4 +1,3 @@
-import { CsvFileReader } from './CsvFileReader';
 import { dateStringToDate } from './utils';
 
 export enum MatchResult {
@@ -17,8 +16,22 @@ export type MatchData = [
   string
 ];
 
-export class MatchReader extends CsvFileReader<MatchData> {
-  protected parseRow(row: string[]): MatchData {
+interface DataReader {
+  read(): void;
+  data: string[][];
+}
+
+export class MatchReader {
+  matchData: MatchData[] = [];
+
+  constructor(public reader: DataReader) {}
+
+  load(): void {
+    this.reader.read();
+    this.matchData = this.reader.data.map(this.parseRow);
+  }
+
+  private parseRow(row: string[]): MatchData {
     return [
       dateStringToDate(row[0]),
       row[1],
