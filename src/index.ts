@@ -1,22 +1,15 @@
 import { WinsAnalyzer } from './analyzers/WinsAnalyzer';
-import { CsvFileReader } from './CsvFileReader';
 import { MatchReader } from './MatchReader';
 import { ConsoleOutput } from './outputTargets/ConsoleOutput';
 import { HtmlOutput } from './outputTargets/HtmlOutput';
 import { SummaryBuilder } from './Summary';
 
-const matchReader = new MatchReader(new CsvFileReader('football.csv'));
-matchReader.load();
+const matchReader = MatchReader.loadFromCsv('football.csv');
 
-const burnleyWinsSummary = new SummaryBuilder(
-  new WinsAnalyzer('Burnley'),
-  new ConsoleOutput()
+new SummaryBuilder(new WinsAnalyzer('Burnley'), new ConsoleOutput()).exec(
+  matchReader.matchData
 );
 
-const burnleyWinsHtmlSummary = new SummaryBuilder(
-  new WinsAnalyzer('Burnley'),
-  new HtmlOutput()
+new SummaryBuilder(new WinsAnalyzer('Burnley'), new HtmlOutput()).exec(
+  matchReader.matchData
 );
-
-burnleyWinsSummary.exec(matchReader.matchData);
-burnleyWinsHtmlSummary.exec(matchReader.matchData);
